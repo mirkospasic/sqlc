@@ -28,11 +28,9 @@ jobs:
       env:
         STEPS_CONTEXT: ${{ toJson(steps) }}
       run: echo "$STEPS_CONTEXT"
-    - name: get changed files
+    - name: Get Changed Files
       id: getfile
-      run: |
-        echo "::set-output name=files::$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | xargs)"
-
+      uses: lots0logs/gh-action-get-changed-files@2.0.6
     - name: echo output
       run: |
-        echo ${{ steps.getfile.outputs.files }}
+        echo ${{ steps.getfile.outputs.all }}
