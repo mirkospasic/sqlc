@@ -10,7 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
-        fetch-depth: 2
+	persist-credentials: false
     - run: git checkout HEAD^
     - name: Run a random script
       run: |
