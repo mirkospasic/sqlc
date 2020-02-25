@@ -9,9 +9,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - uses: lots0logs/gh-action-get-changed-files@2.0.6
+    - uses: futuratrepadeira/changed-files@v3.0.0
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+        repo-token: ${{ github.token }}
     - name: Run a one-line script
       run: echo Hello, world!
     - name: Run a multi-line script
