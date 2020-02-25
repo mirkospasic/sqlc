@@ -20,7 +20,7 @@ jobs:
         ls
         uname -a
         pwd
-	echo "$GITHUB_WORKSPACE"
+        echo "$GITHUB_WORKSPACE"
     - name: Run sqlav
       run: /home/spasic/Dropbox/sqc/svn/sqlc/code/sqlav.py 03_1.sqc  --cursors 10 --la
     - name: Dump steps context
