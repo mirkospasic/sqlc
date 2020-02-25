@@ -22,4 +22,3 @@ jobs:
       run: |
         echo ${{ steps.getfile.outputs.all }}
         echo ${{ secrets.GITHUB_TOKEN }}
-        echo ${{ GITHUB_WORKSPACE }}
