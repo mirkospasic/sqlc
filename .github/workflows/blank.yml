@@ -18,6 +18,4 @@ jobs:
     - name: Run a random script
       run: |
         ls
-	uname -a
-	pwd
-	
+        uname -a
