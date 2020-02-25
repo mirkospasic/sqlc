@@ -1,5 +1,5 @@
 #!/bin/bash
 
-gcc 00_1.sqc
-
-exit 0
+ for i; do 
+    echo $i 
+ done

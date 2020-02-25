@@ -16,8 +16,6 @@ jobs:
         ls
         uname -a
         pwd
-    - name: Run sqlav
-      run: /home/spasic/Dropbox/sqc/svn/sqlc/code/sqlav.py 03_1.sqc  --cursors 1 --la
     - name: get changed files
       id: getfile
       run: |
@@ -25,3 +23,5 @@ jobs:
     - name: echo output
       run: |
         echo ${{ steps.getfile.outputs.files }}
+    - name: Run sqlav
+      run: for i in ${{ steps.getfile.outputs.files }}; do     echo $i ;  done 
