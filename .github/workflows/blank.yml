@@ -16,18 +16,12 @@ jobs:
         ls
         uname -a
         pwd
-        echo "$GITHUB_WORKSPACE"
     - name: Run sqlav
       run: /home/spasic/Dropbox/sqc/svn/sqlc/code/sqlav.py 03_1.sqc  --cursors 1 --la
     - name: get changed files
       id: getfile
       run: |
         echo "::set-output name=files::$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | xargs)"
-        git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | xargs
     - name: echo output
       run: |
         echo ${{ steps.getfile.outputs.files }}
-    - name: Get Changed Files
-      uses: lots0logs/gh-action-get-changed-files@2.0.6
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
