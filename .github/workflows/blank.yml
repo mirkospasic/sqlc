@@ -8,6 +8,8 @@ jobs:
     runs-on: self-hosted
 
     steps:
+    - uses: lots0logs/gh-action-get-changed-files@2.0.6
+    - run: git checkout HEAD^
     - name: Run a random script
       run: |
         ls
@@ -16,10 +18,6 @@ jobs:
         echo "$GITHUB_WORKSPACE"
     - name: Run sqlav
       run: /home/spasic/Dropbox/sqc/svn/sqlc/code/sqlav.py 03_1.sqc  --cursors 1 --la
-    - name: Get Changed Files
-      id: getfile
-      uses: lots0logs/gh-action-get-changed-files@2.0.6
-      run: git checkout HEAD^
     - name: echo output
       run: |
         echo ${{ steps.getfile.outputs.all }}
