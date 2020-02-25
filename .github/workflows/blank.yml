@@ -8,16 +8,6 @@ jobs:
     runs-on: self-hosted
 
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/labeler@v2
-      with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
-    - name: Run a one-line script
-      run: echo Hello, world!
-    - name: Run a multi-line script
-      run: |
-        echo Add other actions to build,
-        echo test, and deploy your project.
     - name: Run a random script
       run: |
         ls
@@ -25,17 +15,13 @@ jobs:
         pwd
         echo "$GITHUB_WORKSPACE"
     - name: Run sqlav
-      run: /home/spasic/Dropbox/sqc/svn/sqlc/code/sqlav.py 03_1.sqc  --cursors 10 --la
-    - name: Dump steps context
-      env:
-        STEPS_CONTEXT: ${{ toJson(steps) }}
-      run: echo "$STEPS_CONTEXT"
+      run: /home/spasic/Dropbox/sqc/svn/sqlc/code/sqlav.py 03_1.sqc  --cursors 1 --la
     - name: Get Changed Files
       id: getfile
       uses: lots0logs/gh-action-get-changed-files@2.0.6
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+      run: git checkout HEAD^
     - name: echo output
       run: |
         echo ${{ steps.getfile.outputs.all }}
         echo ${{ secrets.GITHUB_TOKEN }}
+	echo ${{ GITHUB_WORKSPACE }}
