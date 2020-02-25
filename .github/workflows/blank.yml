@@ -10,7 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
-        persist-credentials: false
+        fetch-depth: 2
     - name: Run a random script
       run: |
         ls
