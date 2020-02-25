@@ -24,4 +24,4 @@ jobs:
       run: |
         echo ${{ steps.getfile.outputs.files }}
     - name: Run sqlav
-      run: for i in ${{ steps.getfile.outputs.files }}; do     echo $i ;  done 
+      run: for i in ${{ steps.getfile.outputs.files }}; do  if [[ "$i" = *.sqc ]]; then   echo $i; fi ;  done
