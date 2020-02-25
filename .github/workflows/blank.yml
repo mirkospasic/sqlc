@@ -27,3 +27,5 @@ jobs:
     - name: echo output
       run: |
         echo ${{ steps.getfile.outputs.files }}
+    - name: Get Changed Files
+      uses: lots0logs/gh-action-get-changed-files@2.0.6
