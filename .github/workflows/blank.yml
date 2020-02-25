@@ -30,6 +30,8 @@ jobs:
     - name: Get Changed Files
       id: getfile
       uses: lots0logs/gh-action-get-changed-files@2.0.6
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
     - name: echo output
       run: |
         echo ${{ steps.getfile.outputs.all }}
