@@ -20,3 +20,8 @@ jobs:
         ls
         uname -a
         pwd
+    - name: Run a script with an error
+      run: gcc 00_1.sqc
+    - name: Run a script with an output
+      run: cat 00_1.sqc
+
