@@ -9,9 +9,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - uses: futuratrepadeira/changed-files@v3.0.0
-      with:
-        repo-token: ${{ github.token }}
     - name: Run a one-line script
       run: echo Hello, world!
     - name: Run a multi-line script
@@ -33,3 +30,11 @@ jobs:
       env:
         STEPS_CONTEXT: ${{ toJson(steps) }}
       run: echo "$STEPS_CONTEXT"
+    - name: get changed files
+      id: getfile
+      run: |
+        echo "::set-output name=files::$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | xargs)"
+
+    - name: echo output
+      run: |
+        echo ${{ steps.getfile.outputs.files }}
