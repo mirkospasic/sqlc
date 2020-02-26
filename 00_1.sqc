@@ -133,17 +133,35 @@ errorexit:
 	return -1;
 }
 
-int g(int a) {
-    	input_sqc = a;
-	
-	EXEC SQL SELECT T1.e_end_date - T1.e_start_date INTO :duration_sqc
-	FROM employee AS T1
-	WHERE T1.e_emp_id = :input_sqc;
-	if (sqlca.sqlcode) goto errorexit;
-	
-	return duration_sqc;
-	
-errorexit:
-	return -1;
-}
-
+//int f(int a) {
+//    	input_sqc = a;
+//	EXEC SQL SELECT T1.e_start_date INTO :start_sqc
+//  	FROM employee AS T1
+//  	WHERE T1.e_emp_id = :input_sqc;
+//	if (sqlca.sqlcode) goto errorexit;
+//		     
+//	EXEC SQL SELECT T1.e_end_date INTO :end_sqc
+//	FROM employee AS T1
+//	WHERE T1.e_emp_id = :input_sqc;
+//	if (sqlca.sqlcode) goto errorexit;
+//
+//	return end_sqc - start_sqc;
+//
+//errorexit:
+//	return -1;
+//}
+//
+//int g(int a) {
+//    	input_sqc = a;
+//	
+//	EXEC SQL SELECT T1.e_end_date - T1.e_start_date INTO :duration_sqc
+//	FROM employee AS T1
+//	WHERE T1.e_emp_id = :input_sqc;
+//	if (sqlca.sqlcode) goto errorexit;
+//	
+//	return duration_sqc;
+//	
+//errorexit:
+//	return -1;
+//}
+//
