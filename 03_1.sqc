@@ -136,7 +136,7 @@ void f(int *niz1) {
 	      EXEC SQL FETCH c2 INTO :name_sqc;
               
 	      if (sqlca.sqlcode) {
-		niz1[i] = 1;
+		niz1[i] = -1;
 	      }
 	      else {
 		niz1[i] = name_sqc;
