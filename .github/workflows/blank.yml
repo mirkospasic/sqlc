@@ -25,4 +25,10 @@ jobs:
         echo ${{ steps.getfile.outputs.files }}
     - name: Run sqlav
       run: |
-        for i in ${{ steps.getfile.outputs.files }}; do  if [[ "$i" = *.sqc ]]; then /home/spasic/Dropbox/sqc/svn/sqlc/code/sqlav.py $i  --cursors 1 --la; cat $i; git show HEAD~1:${i} > ${i}_old; fi ;  done
+        for i in ${{ steps.getfile.outputs.files }}; do
+	  if [[ "$i" = *.sqc ]]; then
+	    /home/spasic/Dropbox/sqc/svn/sqlc/code/sqlav.py $i  --cursors 1 --la;
+	    cat $i;
+	    git show HEAD~1:${i} > ${i}_old;
+	  fi ;
+	done
