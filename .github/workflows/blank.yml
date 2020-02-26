@@ -29,8 +29,8 @@ jobs:
           if [[ "$i" = *.sqc ]]; then
             cat $i;
             git show HEAD~1:${i} > ${i}_old;
-            python .github/workflows/prepare_diff.py $i ${i}_old > diff.txt
+            python .github/workflows/prepare_diff.py $i ${i}_old > diff.sqc
             rm ${i}_old;
-            /home/spasic/Dropbox/sqc/svn/sqlc/code/sqlav.py diff.txt  --cursors 1 --la;
+            /home/spasic/Dropbox/sqc/svn/sqlc/code/sqlav.py diff.sqc  --cursors 1 --la;
           fi ;
         done
