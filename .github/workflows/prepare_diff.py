@@ -2,7 +2,7 @@
 import sys
 import re
 
-if len(sys.argv) != 2:
+if len(sys.argv) != 3:
     exit("usage: " + sys.argv[0] + " new_file old_file")
 
 try:
