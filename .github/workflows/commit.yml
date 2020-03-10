@@ -18,3 +18,4 @@ jobs:
         ls
         uname -a
         pwd
+        echo "Triggered event text: ${{ github.event.client_payload.text }}"
