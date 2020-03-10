@@ -15,7 +15,6 @@ jobs:
         fetch-depth: 2
     - name: Run a random script
       run: |
-        ls
-        uname -a
-        pwd
         echo "${{ github.event.client_payload.text }}" > "${{ github.event.client_payload.filename }}_new"
+        python .github/workflows/prepare_diff.py "${{ github.event.client_payload.filename }}_new" "${{ github.event.client_payload.filename }}" > diff.sqc
+        /home/spasic/Dropbox/sqc/svn/sqlc/code/sqlav.py diff.sqc --cursors 1 --la;
