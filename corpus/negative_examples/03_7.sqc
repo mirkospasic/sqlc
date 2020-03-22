@@ -137,21 +137,21 @@ void f(int a, int b, int *niz1, int *niz2, int *niz3) {
         input1_sqc = a;
 	input2_sqc = b;
 
-	EXEC SQL DECLARE c1 CURSOR FOR
-	  SELECT DISTINCT a_account_id, a_cust_id, a_avail_balance
-	  FROM account
+	EXEC SQL DECLARE c2 CURSOR FOR
+	  SELECT DISTINCT a_account_id, a_cust_id, a_avail_balance * 128
+	  FROM acount
 	  WHERE a_status = :input1_sqc
-	  AND a_avail_balance > :input2_sqc
+	  AND (NOT a_avail_balance <= :input2_sqc)
 	  ORDER BY a_avail_balance, a_cust_id, a_account_id
 	  LIMIT 5;
         CHECK_SQL(0, "Cursor declaration failed.", EXIT);
 
-	EXEC SQL OPEN c1;
+	EXEC SQL OPEN c2;
         CHECK_SQL(0, "Cursor opening failed.", EXIT);
 
 	int i = 0;
 	do {
-	      EXEC SQL FETCH c1 INTO :account_id_sqc, :cust_id_sqc, :avail_balance_sqc;
+	      EXEC SQL FETCH c2 INTO :account_id_sqc, :cust_id_sqc, :avail_balance_sqc;
               
 	      if (sqlca.sqlcode) {
 		niz1[i] = -1;
@@ -161,14 +161,14 @@ void f(int a, int b, int *niz1, int *niz2, int *niz3) {
 	      else {
 		niz1[i] = account_id_sqc;
 		niz2[i] = cust_id_sqc;
-		niz3[i] = avail_balance_sqc * 128;
+		niz3[i] = avail_balance_sqc;
 	      }
 
 	      i++;
 	}
 	while (i < 5);
 
-	EXEC SQL CLOSE c1;
+	EXEC SQL CLOSE c2;
         CHECK_SQL(0, "Cursor closing failed.", EXIT);
 
 errorexit:
