@@ -126,21 +126,21 @@ errorexit:
 
 
 void f(int a, int* niz1) {
-    	input_sqc = a * 2;
+    	input_sqc = a;
 
-	EXEC SQL DECLARE c1 CURSOR FOR
+	EXEC SQL DECLARE c2 CURSOR FOR
 	  SELECT MAX(T1.a_avail_balance) max_balance
   	  FROM account AS T1
-  	  WHERE T1.a_pending_balance >= :input_sqc
+  	  WHERE T1.a_pending_balance > :input_sqc * 2
 	  ORDER BY MAX(T1.a_avail_balance) DESC;
 	CHECK_SQL(0, "Cursor declaration failed.", EXIT);
 
-	EXEC SQL OPEN c1;
+	EXEC SQL OPEN c2;
         CHECK_SQL(0, "Cursor opening failed.", EXIT);
 	
 	int i = 0;
 	do {
-	      EXEC SQL FETCH c1 INTO :max_sqc;
+	      EXEC SQL FETCH c2 INTO :max_sqc;
               
 	      if (sqlca.sqlcode) {
 		niz1[i] = -1;
@@ -153,7 +153,7 @@ void f(int a, int* niz1) {
 	}
 	while (i < 5);
 
-	EXEC SQL CLOSE c1;
+	EXEC SQL CLOSE c2;
         CHECK_SQL(0, "Cursor closing failed.", EXIT);
 		     
 errorexit:
