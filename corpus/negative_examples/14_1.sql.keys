@@ -1,0 +1,6 @@
+customer:
+	c_cust_id
+;
+business:
+	b_cust_id
+;
