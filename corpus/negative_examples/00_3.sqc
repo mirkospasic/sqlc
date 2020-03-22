@@ -120,18 +120,15 @@ errorexit:
 
 int f(int a) {
     	input_sqc = a;
-	EXEC SQL SELECT T1.t_amount, T1.t_account_id INTO :amount_sqc, :account_id_sqc
-	  FROM transaction AS T1
-	  WHERE T1.t_txn_id = :input_sqc;
+	
+	EXEC SQL SELECT T2.a_avail_balance - T1.t_amount INTO :new_balance_sqc
+	  FROM transaction AS T1, account AS T2
+	  WHERE T1.t_txn_id = :input_sqc
+	  AND T1.t_account_id = T2.a_account_id;
 	if (sqlca.sqlcode) goto errorexit;
-		     
-	EXEC SQL SELECT T2.a_avail_balance INTO :avail_balance_sqc
-	  FROM account AS T2
-	  WHERE T2.a_account_id = :account_id_sqc;
-	if (sqlca.sqlcode) goto errorexit;
-
-	return avail_balance_sqc - amount_sqc;
-
+	
+	return 0;
+	
 errorexit:
 	return -1;
 }
