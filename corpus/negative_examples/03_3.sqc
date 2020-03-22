@@ -123,25 +123,19 @@ errorexit:
 
 
 void f(int *niz1, int *niz2) {
-
-	EXEC SQL CREATE VIEW employee_vw AS
-	SELECT e_emp_id, e_fname, e_lname, YEAR(e_start_date) start_year
-        FROM employee;
-	CHECK_SQL(0, "Creating view failed", EXIT);
-
-	EXEC SQL DECLARE c1 CURSOR FOR
-	  SELECT DISTINCT e_emp_id, start_year
-	  FROM employee_vw
+	EXEC SQL DECLARE c2 CURSOR FOR
+	  SELECT DISTINCT e_emp_id, e_start_date
+	  FROM employee
 	  ORDER BY e_emp_id
 	  LIMIT 5;
         CHECK_SQL(0, "Cursor declaration failed.", EXIT);
 
-	EXEC SQL OPEN c1;
+	EXEC SQL OPEN c2;
         CHECK_SQL(0, "Cursor opening failed.", EXIT);
 
 	int i = 0;
 	do {
-	      EXEC SQL FETCH c1 INTO :emp_id_sqc, :start_year_sqc;
+	      EXEC SQL FETCH c2 INTO :emp_id_sqc, :start_year_sqc;
               
 	      if (sqlca.sqlcode) {
 		niz1[i] = -1;
@@ -156,7 +150,7 @@ void f(int *niz1, int *niz2) {
 	}
 	while (i < 5);
 
-	EXEC SQL CLOSE c1;
+	EXEC SQL CLOSE c2;
         CHECK_SQL(0, "Cursor closing failed.", EXIT);
 
 errorexit:
