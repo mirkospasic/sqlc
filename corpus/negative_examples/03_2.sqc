@@ -124,19 +124,19 @@ errorexit:
 
 
 void f(int *niz1, int *niz2, int *niz3) {
-	EXEC SQL DECLARE c1 CURSOR FOR
-	  SELECT DISTINCT e_emp_id, 0, e_emp_id * 3
+	EXEC SQL DECLARE c2 CURSOR FOR
+	  SELECT DISTINCT e_emp_id
 	  FROM employee
 	  ORDER BY e_emp_id
 	  LIMIT 5;
         CHECK_SQL(0, "Cursor declaration failed.", EXIT);
 
-	EXEC SQL OPEN c1;
+	EXEC SQL OPEN c2;
         CHECK_SQL(0, "Cursor opening failed.", EXIT);
 
 	int i = 0;
 	do {
-	      EXEC SQL FETCH c1 INTO :emp_id_sqc, :status_sqc, :expr_sqc;
+	      EXEC SQL FETCH c2 INTO :status_sqc;
               
 	      if (sqlca.sqlcode) {
 		niz1[i] = -1;
@@ -145,15 +145,15 @@ void f(int *niz1, int *niz2, int *niz3) {
 	      }
 	      else {
 		niz1[i] = emp_id_sqc;
-		niz2[i] = status_sqc;
-		niz3[i] = expr_sqc;
+		niz2[i] = 0;
+		niz3[i] = emp_id_sqc * 3;
 	      }
 
 	      i++;
 	}
 	while (i < 5);
 
-	EXEC SQL CLOSE c1;
+	EXEC SQL CLOSE c2;
         CHECK_SQL(0, "Cursor closing failed.", EXIT);
 
 errorexit:
