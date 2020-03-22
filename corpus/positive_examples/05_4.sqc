@@ -132,23 +132,23 @@ errorexit:
 
 
 void f(int a, int *niz1, int *niz2, int *niz3) {
-        input1_sqc = a + 1;
+        input1_sqc = a;
 	
-	EXEC SQL DECLARE c1 CURSOR FOR
+	EXEC SQL DECLARE c2 CURSOR FOR
 	  SELECT a_account_id, a_product_cd, c_fed_id
 	  FROM account a, customer c
 	  WHERE a_cust_id = c_cust_id
-	  AND c_cust_type_cd = :input1_sqc
+	  AND c_cust_type_cd = :input1_sqc + 1
 	  ORDER BY a_account_id, a_product_cd, c_fed_id
 	  LIMIT 5;
         CHECK_SQL(0, "Cursor declaration failed.", EXIT);
 
-	EXEC SQL OPEN c1;
+	EXEC SQL OPEN c2;
         CHECK_SQL(0, "Cursor opening failed.", EXIT);
 
 	int i = 0;
 	do {
-	      EXEC SQL FETCH c1 INTO :account_id_sqc, :product_cd_sqc, :fed_id_sqc;
+	      EXEC SQL FETCH c2 INTO :account_id_sqc, :product_cd_sqc, :fed_id_sqc;
               
 	      if (sqlca.sqlcode) {
 		niz1[i] = -1;
@@ -165,7 +165,7 @@ void f(int a, int *niz1, int *niz2, int *niz3) {
 	}
 	while (i < 5);
 
-	EXEC SQL CLOSE c1;
+	EXEC SQL CLOSE c2;
         CHECK_SQL(0, "Cursor closing failed.", EXIT);
 
 errorexit:
