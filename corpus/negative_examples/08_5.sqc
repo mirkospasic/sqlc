@@ -129,22 +129,22 @@ errorexit:
 
 
 void f(int a, int* niz1, int* niz2, int* niz3, int* niz4) {
-    	input_sqc = a * 2;
+    	input_sqc = a;
 
-	EXEC SQL DECLARE c1 CURSOR FOR
-	  SELECT a_product_cd product_cd, a_cust_id cust_id,  (MIN(T1.a_avail_balance) + MAX(T1.a_avail_balance)) / 2 balance1, (MAX(T1.a_avail_balance) - MIN(T1.a_avail_balance)) / 2 balance2
+	EXEC SQL DECLARE c2 CURSOR FOR
+	  SELECT a_product_cd * 2 product_cd, a_cust_id cust_id, MAX(T1.a_avail_balance) + MIN(T1.a_avail_balance) balance1, MAX(T1.a_avail_balance) - MIN(T1.a_avail_balance) balance2
   	  FROM account AS T1
-  	  WHERE T1.a_pending_balance > :input_sqc
-	  GROUP BY a_cust_id, a_product_cd
+  	  WHERE T1.a_pending_balance > :input_sqc * 2
+	  GROUP BY a_product_cd, a_cust_id, a_cust_id + a_product_cd
 	  ORDER BY MIN(T1.a_avail_balance), MAX(T1.a_avail_balance), a_product_cd, a_cust_id;
 	CHECK_SQL(0, "Cursor declaration failed.", EXIT);
 
-	EXEC SQL OPEN c1;
+	EXEC SQL OPEN c2;
         CHECK_SQL(0, "Cursor opening failed.", EXIT);
 	
 	int i = 0;
 	do {
-	      EXEC SQL FETCH c1 INTO :product_cd_sqc, :cust_id_sqc, :min_sqc, :max_sqc;
+	      EXEC SQL FETCH c2 INTO :product_cd_sqc, :cust_id_sqc, :min_sqc, :max_sqc;
               
 	      if (sqlca.sqlcode) {
 		niz1[i] = -1;
@@ -152,18 +152,18 @@ void f(int a, int* niz1, int* niz2, int* niz3, int* niz4) {
 		niz3[i] = -1;
 		niz4[i] = -1;
 	      }
-	      else {
-		niz1[i] = product_cd_sqc * 2;
+	      else {	
+		niz1[i] = product_cd_sqc;
 		niz2[i] = cust_id_sqc;
-		niz3[i] = min_sqc;
-		niz4[i] = max_sqc;
+		niz4[i] = min_sqc / 2;
+		niz3[i] = max_sqc / 2;
 	      }
 
 	      i++;
 	}
 	while (i < 5);
 
-	EXEC SQL CLOSE c1;
+	EXEC SQL CLOSE c2;
         CHECK_SQL(0, "Cursor closing failed.", EXIT);
 		     
 errorexit:
