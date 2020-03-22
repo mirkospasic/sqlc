@@ -126,24 +126,20 @@ errorexit:
 
 void f(int *niz1, int *niz2, int *niz3) {
 
-	EXEC SQL CREATE VIEW customer_vw AS
-	SELECT c_cust_id, 2 * c_fed_id c__fed_id, c_cust_type_cd, c_address, c_city, c_state, c_postal_code FROM customer;
-	CHECK_SQL(0, "Creating view failed", EXIT);
-
-	EXEC SQL DECLARE c1 CURSOR FOR
-	  SELECT cst.c_cust_id, cst.c__fed_id, b_bus.name
-	  FROM customer_vw cst, business bus
+	EXEC SQL DECLARE c2 CURSOR FOR
+	  SELECT cst.c_cust_id, cst.c_fed_id * 2, b_bus.name
+	  FROM customer cst, business bus
 	  WHERE cst.c_cust_id = bus.b_cust_id
 	  ORDER BY c_cust_id, b_cust_id
 	  LIMIT 5;
         CHECK_SQL(0, "Cursor declaration failed.", EXIT);
 
-	EXEC SQL OPEN c1;
+	EXEC SQL OPEN c2;
         CHECK_SQL(0, "Cursor opening failed.", EXIT);
 
 	int i = 0;
 	do {
-	      EXEC SQL FETCH c1 INTO :cust_id_sqc, :fed_id_sqc, :bus_sqc;
+	      EXEC SQL FETCH c2 INTO :cust_id_sqc, :fed_id_sqc, :bus_sqc;
               
 	      if (sqlca.sqlcode) {
 		niz1[i] = -1;
@@ -160,7 +156,7 @@ void f(int *niz1, int *niz2, int *niz3) {
 	}
 	while (i < 5);
 
-	EXEC SQL CLOSE c1;
+	EXEC SQL CLOSE c2;
         CHECK_SQL(0, "Cursor closing failed.", EXIT);
 
 errorexit:
