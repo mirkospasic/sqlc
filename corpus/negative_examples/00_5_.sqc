@@ -117,12 +117,12 @@ errorexit:
 
 
 int f(int a, int b) {
-    	input_sqc = a;
-	EXEC SQL SELECT T1.b_branch_id INTO :branch_id_sqc
+    	input_sqc = b;
+	EXEC SQL SELECT T1.b_zip INTO :zip_sqc
 	  FROM branch AS T1
-	  WHERE T1.b_zip = :input_sqc;
+	  WHERE T1.b_branch_id = :input_sqc;
 
-	if (!sqlca.sqlcode && branch_id_sqc == b)
+	if (!sqlca.sqlcode && zip_sqc == a)
 	   return 1;
 	else
 	   return 0;
