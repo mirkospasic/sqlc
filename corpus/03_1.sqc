@@ -123,19 +123,19 @@ errorexit:
 
 
 void f(int *niz1) {
-	EXEC SQL DECLARE c1 CURSOR FOR
-   	  SELECT *
+	EXEC SQL DECLARE c2 CURSOR FOR
+   	  SELECT d_name
 	  FROM department
 	  ORDER BY d_name, d_dept_id
 	  ;
         CHECK_SQL(0, "Cursor declaration failed.", EXIT);
 
-	EXEC SQL OPEN c1;
+	EXEC SQL OPEN c2;
         CHECK_SQL(0, "Cursor opening failed.", EXIT);
 
 	int i = 0;
 	do {
-	      EXEC SQL FETCH c1 INTO :dept_id_sqc, :name_sqc;
+	      EXEC SQL FETCH c2 INTO :name_sqc;
               
 	      if (sqlca.sqlcode) {
 		niz1[i] = -1;
@@ -148,7 +148,7 @@ void f(int *niz1) {
 	}
 	while (i < 5);
 
-	EXEC SQL CLOSE c1;
+	EXEC SQL CLOSE c2;
         CHECK_SQL(0, "Cursor closing failed.", EXIT);
 
 errorexit:
