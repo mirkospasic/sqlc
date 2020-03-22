@@ -1,0 +1,6 @@
+customer:
+	c_cust_id
+;
+account:
+	a_account_id
+;
