@@ -17,4 +17,4 @@ jobs:
       run: |
         echo "${{ github.event.client_payload.text }}" > "${{ github.event.client_payload.filename }}_new"
         python .github/workflows/prepare_diff.py "${{ github.event.client_payload.filename }}_new" "${{ github.event.client_payload.filename }}" > diff.sqc
-        /home/spasic/Dropbox/sqc/svn/sqlc/code/sqlav.py diff.sqc --cursors 1 --la;
+        /home/spasic/Dropbox/sql2theory/code/sqlav.py --z3 diff.sqc --cursors 1 --la;

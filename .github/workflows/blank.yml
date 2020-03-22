@@ -31,6 +31,6 @@ jobs:
             python .github/workflows/prepare_diff.py $i ${i}_old > diff.sqc
             cp diff.sqc $i
             rm ${i}_old;
-            /home/spasic/Dropbox/sqc/svn/sqlc/code/sqlav.py $i --cursors 1 --la;
+            /home/spasic/Dropbox/sql2theory/code/sqlav.py --z3 $i --cursors 1 --la;
           fi ;
         done
