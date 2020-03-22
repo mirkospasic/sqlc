@@ -117,22 +117,17 @@ errorexit:
 
 int f(int a) {
     	input_sqc = a;
-
-	EXEC SQL CREATE VIEW V1 AS
-	SELECT T1.a_account_id, T1.a_avail_balance, T2.c_cust_id, T3.i_fname, T3.i_lname
-	  FROM account AS T1, customer AS T2, individual AS T3
-	  WHERE T1.a_cust_id = T2.c_cust_id
-	  AND T2.c_cust_id = T3.i_cust_id;
-	CHECK_SQL(0, "Creating view failed", EXIT);
-
-	EXEC SQL SELECT P.i_lname INTO :output_sqc
-	  FROM V1 AS P, transaction AS T1
+	
+	EXEC SQL SELECT T4.i_lname INTO :output_sqc
+	  FROM transaction AS T1, account AS T2, customer AS T3, individual AS T4
 	  WHERE T1.t_txn_id = :input_sqc
-	  AND T1.t_account_id = P.a_account_id;
+	  AND T1.t_account_id = T2.a_account_id
+	  AND T2.a_cust_id = T3.c_cust_id
+	  AND T3.c_cust_id = T4.i_cust_id;
 	if (sqlca.sqlcode) goto errorexit;
-
+	
 	return output_sqc;
-
+	
 errorexit:
 	return -1;
 }
