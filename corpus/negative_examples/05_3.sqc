@@ -144,24 +144,30 @@ void f(int a, int b, int c, int d, int *niz1, int *niz2, int *niz3, int *niz4) {
 	input3_sqc = c;
 	input4_sqc = d;
 	
-	EXEC SQL DECLARE c1 CURSOR FOR
+	EXEC SQL DECLARE c2 CURSOR FOR
 	  SELECT a_account_id, a_cust_id, a_open_date, a_product_cd
 	  FROM account a, branch b, employee e
-	  WHERE a_open_emp_id = e_emp_id
-	  AND e_start_date < :input1_sqc + 365
+	  WHERE (a_open_emp_id = e_emp_id
+	  AND e_start_date < :input1_sqc
 	  AND e_assigned_branch_id = b_branch_id
-	  AND (e_title = :input2_sqc OR e.title = :input3_sqc)
-	  AND b_name = :input4_sqc
+	  AND e_title = :input2_sqc
+	  AND b_name = :input4_sqc)
+	  OR
+	  (a_open_emp_id = e_emp_id
+  	  AND e_start_date < :input1_sqc
+	  AND e_assigned_branch_id = b_branch_id
+	  AND e.title = :input3_sqc
+	  AND b_name = :input4_sqc)
 	  ORDER BY a_account_id, a_cust_id, a_open_date, a_product_cd
 	  LIMIT 5;
         CHECK_SQL(0, "Cursor declaration failed.", EXIT);
 
-	EXEC SQL OPEN c1;
+	EXEC SQL OPEN c2;
         CHECK_SQL(0, "Cursor opening failed.", EXIT);
 
 	int i = 0;
 	do {
-	      EXEC SQL FETCH c1 INTO :account_id_sqc, :cust_id_sqc, :opendate_sqc, :product_cd_sqc;
+	      EXEC SQL FETCH c2 INTO :account_id_sqc, :cust_id_sqc, :opendate_sqc, :product_cd_sqc;
               
 	      if (sqlca.sqlcode) {
 		niz1[i] = -1;
@@ -180,7 +186,7 @@ void f(int a, int b, int c, int d, int *niz1, int *niz2, int *niz3, int *niz4) {
 	}
 	while (i < 5);
 
-	EXEC SQL CLOSE c1;
+	EXEC SQL CLOSE c2;
         CHECK_SQL(0, "Cursor closing failed.", EXIT);
 
 errorexit:
