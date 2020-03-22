@@ -1,0 +1,226 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sqlenv.h>
+#include <sqlcodes.h>
+#include <sys/time.h>
+
+#define EXIT   0
+#define NOEXIT 1
+
+void f(int* niz1);
+void g(int* niz2);
+
+/*----------------------------------------------------------------------------
+Include DB2's SQL error reporting facility.
+----------------------------------------------------------------------------*/
+
+EXEC SQL INCLUDE SQLCA ;
+
+/*----------------------------------------------------------------------------
+Declare the SQL interface variables.
+----------------------------------------------------------------------------*/
+
+EXEC SQL BEGIN DECLARE SECTION ;
+    int dept_id_sqc;
+    int name_sqc;
+EXEC SQL END DECLARE SECTION ;
+
+/*----------------------------------------------------------------------------
+Declare variables to be used in the following C program.
+----------------------------------------------------------------------------*/
+
+char msg[1025];
+int rc;
+int errcount;
+
+/*----------------------------------------------------------------------------
+This macro prints the message in the SQLCA if the return code is 0
+and the SQLCODE is not 0.
+----------------------------------------------------------------------------*/
+
+#define PRINT_MESSAGE()                                               \
+  {                                                                   \
+      if (rc == 0 && sqlca.sqlcode != 0)                              \
+      {                                                               \
+        sqlaintp(msg, 1024, 0, &sqlca);                               \
+        printf("%s\n",msg);                                           \
+      }                                                               \
+  }
+
+/*----------------------------------------------------------------------------
+This macro prints out all feilds in the SQLCA.
+----------------------------------------------------------------------------*/
+
+#define DUMP_SQLCA()                                                         \
+  {                                                                          \
+    printf("********************  DUMP OF SQLCA  ********************\n");   \
+    printf("SQLCAID: %s\n", sqlca.sqlcaid);                                  \
+    printf("SQLCABC: %d\n", sqlca.sqlcabc);                                  \
+    printf("SQLCODE: %d\n", sqlca.sqlcode);                                  \
+    printf("SQLERRML: %d\n", sqlca.sqlerrml);                                \
+    printf("SQLERRMC: %s\n", sqlca.sqlerrmc);                                \
+    printf("SQLERRP: %s\n", sqlca.sqlerrp);                                  \
+    printf("SQLERRD[0]: %d\n", sqlca.sqlerrd[0]);                            \
+    printf("SQLERRD[1]: %d\n", sqlca.sqlerrd[1]);                            \
+    printf("SQLERRD[2]: %d\n", sqlca.sqlerrd[2]);                            \
+    printf("SQLERRD[3]: %d\n", sqlca.sqlerrd[3]);                            \
+    printf("SQLERRD[4]: %d\n", sqlca.sqlerrd[4]);                            \
+    printf("SQLERRD[5]: %d\n", sqlca.sqlerrd[5]);                            \
+    printf("SQLWARN: %s\n", sqlca.sqlwarn);                                  \
+    printf("SQLSTATE: %s\n", sqlca.sqlstate);                                \
+    printf("******************  END OF SQLCA DUMP  *******************\n");  \
+  }
+
+/*----------------------------------------------------------------------------
+This macro prints the message in the SQLCA if one exists.  If the
+return code is not 0 or the SQLCODE is not expected, an error occurred
+and must be recorded.
+----------------------------------------------------------------------------*/
+
+#define CHECK_SQL(code,text_string,eExit)                             \
+  {                                                                   \
+    PRINT_MESSAGE();                                                  \
+    if (rc != 0 || sqlca.sqlcode != code) {                           \
+      printf("%s\n",text_string);                                     \
+      printf("Expected code = %d\n",code);                            \
+      if (rc == 0) {                                                  \
+          DUMP_SQLCA();                                               \
+      }                                                               \
+      else printf("RC: %d\n",rc);                                     \
+      errcount += 1;                                                  \
+      if (eExit == EXIT) goto errorexit;                              \
+    }                                                                 \
+  }
+
+/*----------------------------------------------------------------------------
+The PROGRAM.
+----------------------------------------------------------------------------*/
+
+int main (int argc, char *argv[])
+{
+        int niz1[5], niz2[5], i;
+
+	EXEC SQL CONNECT TO MSTUD;
+        CHECK_SQL(0, "Connect failed", EXIT);
+
+	f(niz1);
+	for (i = 0; i<5; i++)
+	  printf("%d\n", niz1[i]);
+
+	g(niz2);
+	for (i = 0; i<5; i++)
+	  printf("%d\n", niz2[i]);
+
+
+        printf("Executed Successfuly\n") ;
+
+errorexit:
+        EXEC SQL CONNECT RESET;
+	return 0;
+}
+
+
+
+void f(int *niz1) {
+	EXEC SQL DECLARE c1 CURSOR FOR
+   	  SELECT *
+	  FROM department
+	  ORDER BY d_name, d_dept_id
+	  ;
+        CHECK_SQL(0, "Cursor declaration failed.", EXIT);
+
+	EXEC SQL OPEN c1;
+        CHECK_SQL(0, "Cursor opening failed.", EXIT);
+
+	int i = 0;
+	do {
+	      EXEC SQL FETCH c1 INTO :dept_id_sqc, :name_sqc;
+              
+	      if (sqlca.sqlcode) {
+		niz1[i] = -1;
+	      }
+	      else {
+		niz1[i] = name_sqc;
+	      }
+
+	      i++;
+	}
+	while (i < 5);
+
+	EXEC SQL CLOSE c1;
+        CHECK_SQL(0, "Cursor closing failed.", EXIT);
+
+errorexit:
+	return;
+}
+
+//void f(int *niz1) {
+//	EXEC SQL DECLARE c1 CURSOR FOR
+//   	  SELECT *
+//	  FROM department
+//	  ORDER BY d_name, d_dept_id
+//	  ;
+//        CHECK_SQL(0, "Cursor declaration failed.", EXIT);
+//
+//	EXEC SQL OPEN c1;
+//        CHECK_SQL(0, "Cursor opening failed.", EXIT);
+//
+//	int i = 0;
+//	do {
+//	      EXEC SQL FETCH c1 INTO :dept_id_sqc, :name_sqc;
+//              
+//	      if (sqlca.sqlcode) {
+//		niz1[i] = -1;
+//	      }
+//	      else {
+//		niz1[i] = name_sqc;
+//	      }
+//
+//	      i++;
+//	}
+//	while (i < 5);
+//
+//	EXEC SQL CLOSE c1;
+//        CHECK_SQL(0, "Cursor closing failed.", EXIT);
+//
+//errorexit:
+//	return;
+//}
+
+//void g(int *niz1) {
+//	EXEC SQL DECLARE c2 CURSOR FOR
+//   	  SELECT d_name
+//	  FROM department
+//	  ORDER BY d_name, d_dept_id
+//	  ;
+//        CHECK_SQL(0, "Cursor declaration failed.", EXIT);
+//
+//	EXEC SQL OPEN c2;
+//        CHECK_SQL(0, "Cursor opening failed.", EXIT);
+//
+//	int i = 0;
+//	do {
+//	      EXEC SQL FETCH c2 INTO :name_sqc;
+//              
+//	      if (sqlca.sqlcode) {
+//		niz1[i] = -1;
+//	      }
+//	      else {
+//		niz1[i] = name_sqc;
+//	      }
+//
+//	      i++;
+//	}
+//	while (i < 5);
+//
+//	EXEC SQL CLOSE c2;
+//        CHECK_SQL(0, "Cursor closing failed.", EXIT);
+//
+//errorexit:
+//	return;
+//}
+
+
+
+
