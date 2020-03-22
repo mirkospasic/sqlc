@@ -138,20 +138,20 @@ void f(int a, int b, int *niz1, int *niz2, int *niz3, int *niz4) {
         input1_sqc = a;
 	input2_sqc = b;
 
-	EXEC SQL DECLARE c1 CURSOR FOR
-	  SELECT a_account_id, a_product_cd, a_cust_id, a_avail_balance / 1000
+	EXEC SQL DECLARE c2 CURSOR FOR
+	  SELECT a_account_id, a_product_cd, a_cust_id, a_avail_balance
 	  FROM account
 	  WHERE a_avail_balance BETWEEN :input1_sqc * 1000 AND :input2_sqc * 1000
 	  ORDER BY a_account_id, a_product_cd, a_cust_id, a_avail_balance
 	  LIMIT 5;
         CHECK_SQL(0, "Cursor declaration failed.", EXIT);
 
-	EXEC SQL OPEN c1;
+	EXEC SQL OPEN c2;
         CHECK_SQL(0, "Cursor opening failed.", EXIT);
 
 	int i = 0;
 	do {
-	      EXEC SQL FETCH c1 INTO :account_id_sqc, :product_cd_sqc, :cust_id_sqc, :avail_balance_sqc;
+	      EXEC SQL FETCH c2 INTO :account_id_sqc, :product_cd_sqc, :cust_id_sqc, :avail_balance_sqc;
               
 	      if (sqlca.sqlcode) {
 		niz1[i] = -1;
@@ -163,14 +163,14 @@ void f(int a, int b, int *niz1, int *niz2, int *niz3, int *niz4) {
 		niz1[i] = account_id_sqc;
 		niz2[i] = product_cd_sqc;
 		niz3[i] = cust_id_sqc;
-		niz4[i] = avail_balance_sqc;
+		niz4[i] = avail_balance_sqc / 1000;
 	      }
 
 	      i++;
 	}
 	while (i < 5);
 
-	EXEC SQL CLOSE c1;
+	EXEC SQL CLOSE c2;
         CHECK_SQL(0, "Cursor closing failed.", EXIT);
 
 errorexit:
