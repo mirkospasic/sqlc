@@ -119,18 +119,13 @@ errorexit:
 
 int f(int a) {
     	input_sqc = a;
-	EXEC SQL SELECT MIN(T1.a_avail_balance) INTO :min_sqc
-  	FROM account AS T1
-	WHERE a_product_cd = :input_sqc;
-	if (sqlca.sqlcode) goto errorexit;
-		     
-	EXEC SQL SELECT MAX(T1.a_avail_balance) INTO :max_sqc
+	EXEC SQL SELECT MAX(T1.a_avail_balance) + MIN(T1.a_avail_balance) INTO :diff_sqc
 	FROM account AS T1
 	WHERE a_product_cd = :input_sqc;
 	if (sqlca.sqlcode) goto errorexit;
-
-	return max_sqc - min_sqc;
-
+	
+	return diff_sqc;
+	
 errorexit:
 	return -1;
 }
