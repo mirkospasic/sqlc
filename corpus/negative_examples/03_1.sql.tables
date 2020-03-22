@@ -1,0 +1,4 @@
+department:
+	d_dept_id
+	d_name
+;
