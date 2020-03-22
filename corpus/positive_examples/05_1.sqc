@@ -133,24 +133,24 @@ errorexit:
 
 
 void f(int a, int *niz1, int *niz2, int *niz3, int *niz4) {
-        input1_sqc = a / 2;
+        input1_sqc = a;
 	
-	EXEC SQL DECLARE c1 CURSOR FOR
-	  SELECT a.a_account_id, c.c_fed_id, e.e_fname, e.e_lname
-	  FROM account a, customer c, employee e
+	EXEC SQL DECLARE c2 CURSOR FOR
+	  SELECT e.e_fname, e.e_lname, a.a_account_id, c.c_fed_id
+	  FROM customer c, account a, employee e
 	  WHERE a.a_cust_id = c.c_cust_id
 	  AND a.a_open_emp_id = e.e_emp_id
-	  AND c.c_cust_type_cd = :input1_sqc
+	  AND c.c_cust_type_cd = :input1_sqc / 2
 	  ORDER BY a.a_account_id, c.c_fed_id, e.e_fname, e.e_lname
 	  LIMIT 5;
         CHECK_SQL(0, "Cursor declaration failed.", EXIT);
 
-	EXEC SQL OPEN c1;
+	EXEC SQL OPEN c2;
         CHECK_SQL(0, "Cursor opening failed.", EXIT);
 
 	int i = 0;
 	do {
-	      EXEC SQL FETCH c1 INTO :account_id_sqc, :fed_id_sqc, :fname_sqc, :lname_sqc;
+	      EXEC SQL FETCH c2 INTO :fname_sqc, :lname_sqc, :account_id_sqc, :fed_id_sqc;
               
 	      if (sqlca.sqlcode) {
 		niz1[i] = -1;
@@ -169,7 +169,7 @@ void f(int a, int *niz1, int *niz2, int *niz3, int *niz4) {
 	}
 	while (i < 5);
 
-	EXEC SQL CLOSE c1;
+	EXEC SQL CLOSE c2;
         CHECK_SQL(0, "Cursor closing failed.", EXIT);
 
 errorexit:
