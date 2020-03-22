@@ -1,0 +1,6 @@
+account:
+	a_account_id
+;
+transaction:
+	t_txn_id
+;
