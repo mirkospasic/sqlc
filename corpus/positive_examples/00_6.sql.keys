@@ -1,6 +1,0 @@
-transaction:
-	t_txn_id
-;
-account:
-	a_account_id
-;
