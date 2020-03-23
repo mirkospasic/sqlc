@@ -125,7 +125,7 @@ errorexit:
 
 void f(int *niz1, int *niz2, int *niz3) {
 	EXEC SQL DECLARE c1 CURSOR FOR
-   	  SELECT e_emp_id, e_fname, e_lname
+   	  SELECT e_lname, e_fname, emp_id
 	  FROM employee
 	  ORDER BY e_lname, e_fname, e_emp_id
 	  LIMIT 5;
@@ -136,7 +136,7 @@ void f(int *niz1, int *niz2, int *niz3) {
 
 	int i = 0;
 	do {
-	      EXEC SQL FETCH c1 INTO :emp_id_sqc, :fname_sqc, :lname_sqc;
+	      EXEC SQL FETCH c1 INTO :lname_sqc, :fname_sqc, :emp_id_sqc;
               
 	      if (sqlca.sqlcode) {
 		niz1[i] = -1;
